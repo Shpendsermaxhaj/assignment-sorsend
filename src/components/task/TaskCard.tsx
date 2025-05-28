@@ -32,13 +32,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, isEntering, onEdit, onDelete 
       className={
         `transition-all duration-300 ease-in-out ` +
         (isEntering ? 'opacity-0 scale-95 ' : 'opacity-100 scale-100 ') +
-        'hover:scale-105 cursor-pointer'
+        'hover:scale-105 cursor-pointer hover:shadow-lg'
       }
       onClick={onEdit}
-      actions={[
-        <Button key="edit" type="text" icon={<EditOutlined />} onClick={onEdit} />,
-        <Button key="delete" type="text" danger icon={<DeleteOutlined />} onClick={onDelete} />,
-      ]}
     >
       <div className="flex justify-between items-center">
         <div>
@@ -54,6 +50,25 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, isEntering, onEdit, onDelete 
             )}
           </div>
         </div>
+      </div>
+      <div className="flex gap-2 mt-4">
+        <Button
+          block
+          icon={<EditOutlined />}
+          onClick={onEdit}
+          style={{ flex: 1 }}
+        >
+          Edit
+        </Button>
+        <Button
+          block
+          danger
+          icon={<DeleteOutlined />}
+          onClick={onDelete}
+          style={{ flex: 1 }}
+        >
+          Delete
+        </Button>
       </div>
     </AntCard>
   );

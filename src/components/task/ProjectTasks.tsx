@@ -7,7 +7,6 @@ import CustomModal from '@/components/common/CustomModal';
 import { useModal } from '@/context/ModalContext';
 import TaskForm from './TaskForm';
 import { useTasks } from '@/hooks/task/useTasks';
-import dayjs from 'dayjs';
 import { useSocket } from '@/hooks/useSocket';
 import { useTaskTransitions } from '@/hooks/task/useTaskTransitions';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -124,7 +123,9 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId, onTaskCreated })
   return (
     <div>
       <div className="mt-6 flex justify-between items-center">
-        <Typography.Title level={4}>Tasks</Typography.Title>
+        <Typography.Title level={4}>
+          Tasks <span className="text-gray-400 font-normal">({tasks.length})</span>
+        </Typography.Title>
         <div className="flex items-center gap-4 mb-5">
           <PrimaryButton onClick={() => setRole(role === 'manager' ? 'employee' : 'manager')}>
             Switch to {role === 'manager' ? 'Employee' : 'Manager'}
