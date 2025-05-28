@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Manager
 
-## Getting Started
+A real-time task management application built with Next.js, Prisma, PostgreSQL, and Socket.IO.
 
-First, run the development server:
+## Installation
 
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd task-manager
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up your PostgreSQL database and update the `.env` file with your database URL:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/task_manager"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run Prisma migrations:
+```bash
+npx prisma migrate dev
+```
 
-## Learn More
+5. Start the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Project management
+- Real-time task updates
+- Task prioritization
+- Due date tracking
+- Status management
+- Beautiful UI with Ant Design
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
+- Next.js 14 (App Router)
+- Prisma with PostgreSQL
+- Socket.IO for real-time updates
+- Ant Design for UI components
+- Tailwind CSS for styling
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Technical Considerations
+
+### 1. Scaling to 10,000+ Users
+
+To scale this application for 10,000+ users, several changes would be necessary:
+
+1. **Database Optimization**:
+   - Implement database sharding
+   - Add proper indexing on frequently queried fields
+   - Use connection pooling
+   - Consider read replicas for better read performance
+
+2. **Caching Layer**:
+   - Implement Redis for caching frequently accessed data
+   - Cache project lists and task counts
+   - Use stale-while-revalidate pattern for better performance
+
+3. **Real-time Updates**:
+   - Move from Socket.IO to a more scalable solution like Redis Pub/Sub
+   - Implement message queuing for task creation/updates
+   - Use WebSocket clusters for better connection management
+
+4. **API Optimization**:
+   - Implement API rate limiting
+   - Add request batching
+   - Use GraphQL for more efficient data fetching
+   - Implement proper pagination
+
+### 2. Potential Edge Cases and Risks
+
+1. **Data Consistency**:
+   - Race conditions during concurrent task creation
+   - Inconsistent state between real-time updates and database
+   - Network failures during task creation
+
+2. **Performance Issues**:
+   - Memory leaks from unclosed WebSocket connections
+   - Database connection pool exhaustion
+   - Slow queries with large datasets
+
+3. **Security Concerns**:
+   - WebSocket connection flooding
+   - SQL injection (mitigated by Prisma)
+   - XSS attacks (mitigated by Next.js)
+
+4. **User Experience**:
+   - Offline support
+   - Browser compatibility
+   - Mobile responsiveness
+
+### 3. Preventing Task Duplication in Webhook System
+
+To prevent task duplication in a webhook system:
+
+1. **Idempotency Keys**:
+   - Generate unique idempotency keys for each task creation request
+   - Store these keys in Redis with a TTL
+   - Reject duplicate requests with the same key
+
+2. **Request Deduplication**:
+   - Implement request deduplication at the API gateway level
+   - Use request signatures to identify duplicates
+   - Cache recent requests to prevent duplicates
+
+3. **Database Constraints**:
+   - Add unique constraints on task identifiers
+   - Use database transactions for atomic operations
+   - Implement optimistic locking for concurrent updates
+
+4. **Queue System**:
+   - Use a message queue (e.g., RabbitMQ, Kafka)
+   - Implement message deduplication
+   - Use message groups to ensure ordered processing
+
