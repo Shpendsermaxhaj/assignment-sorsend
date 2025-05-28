@@ -79,10 +79,14 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId, onTaskCreated })
     }
   };
 
+  const debouncedHandleTaskUpdate = useDebounce(handleTaskUpdate, 500); // 500ms debounce
+
   const handleTaskDelete = async (taskId: string) => {
     await deleteTask(taskId);
     if (onTaskCreated) onTaskCreated();
   };
+
+  const debouncedHandleTaskDelete = useDebounce(handleTaskDelete, 500); // 500ms debounce
 
   const handleOpenTaskModal = (task?: any) => {
     openModal(
@@ -93,7 +97,7 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId, onTaskCreated })
         footer={null}
       >
         <TaskForm
-          onSubmit={task ? (values) => handleTaskUpdate(task.id, values) : debouncedHandleTaskSubmit}
+          onSubmit={task ? (values) => debouncedHandleTaskUpdate(task.id, values) : debouncedHandleTaskSubmit}
           loading={loading}
           initialValues={task || {}}
           onCancel={closeModal}
@@ -103,7 +107,7 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId, onTaskCreated })
     );
   };
 
-  const debouncedHandleTaskSubmit = useDebounce(handleTaskSubmit, 500);
+  const debouncedHandleTaskSubmit = useDebounce(handleTaskSubmit, 500); //500ms debounce
 
   const handleDeleteClick = (taskId: string) => {
     setDeleteModal({ visible: true, taskId });
@@ -111,7 +115,7 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId, onTaskCreated })
 
   const handleConfirmDelete = async () => {
     if (deleteModal.taskId) {
-      await handleTaskDelete(deleteModal.taskId);
+      await debouncedHandleTaskDelete(deleteModal.taskId);
       setDeleteModal({ visible: false, taskId: null });
     }
   };
